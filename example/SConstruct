@@ -1,0 +1,27 @@
+import os
+import sys
+
+env = Environment()
+
+objs = []
+objs += Glob('../*.c')+ Glob('../protobuf-c/protobuf-c.c')
+
+cwd     = os.getcwd()
+path    = [os.path.join(cwd, './')]
+path   += [os.path.join(cwd, '../')]
+path   += [os.path.join(cwd, './backend')]
+
+# Parser
+env.Program(target = "onnx-parser", source = objs + Glob('./parse/parse_test.c'), CPPPATH = path, LIBS=[])
+
+# Transpose
+env.Program(target = "onnx-transpose", source = objs + Glob('./transpose/transpose_test.c') + Glob('./backend/transpose.c') + Glob('./backend/info.c'), CPPPATH = path)
+
+# mnist
+env.Program(target = "onnx-mnist", source = objs + Glob('./mnist/mnist.c') + Glob('./backend/*.c'), CPPPATH = path)
+
+# mnist-sm
+env.Program(target = "onnx-mnist-sm", source = objs + Glob('./mnist/mnist_sm.c') + Glob('./backend/*.c'), CPPPATH = path)
+
+# mnist-model
+env.Program(target = "onnx-mnist-model", source = objs +Glob('./mnist/mnist_model.c') + Glob('./backend/*.c'), CPPPATH = path)
